@@ -11,28 +11,23 @@ namespace FourCarvings
     /// </summary>
     public class StartGameUI : MonoBehaviour
     {
+        //引用腳本
         public SaveLoadManager manager;
-        //public GameObject saveloadPanel;
-
-        /*
-        [Header("開始面板按鈕")]
-        public Button NewButton; //新遊戲
-        public Button ContinueButton; //繼續遊戲
-        public Button LoadButton; //讀取遊戲
-        public Button ExitButton; //離開遊戲
-        */
-
+        
+        //物件-按鈕:開始0、繼續1、讀檔2、離開3
         public Button[] startScenceButton = new Button[4];
+        //物件-替換圖片:原圖、替換圖片
         public Sprite[] originalImage = new Sprite[4];
         public Sprite[] changeImage = new Sprite[4];
 
         private void Awake()
         {
-            manager.InitializeInfo();
-
-            #region 監聽
+ 
+            //事件訂閱
             StartButton.OnUp += theMouseUp;
             StartButton.OnDown += theMouseDown;
+
+            #region 按鈕監聽
             startScenceButton[0].onClick.AddListener(NewGame);
             startScenceButton[1].onClick.AddListener(ContinueGame);
             startScenceButton[2].onClick.AddListener(LoadGame);
@@ -41,8 +36,10 @@ namespace FourCarvings
         }
         private void Start()
         {
-            //saveloadPanel.GetComponent<CanvasGroup>().alpha = 0;
-            manager.SaveCanvas(false);
+            
+            manager.ShowSaveCanvas(false);  //存讀檔面板不顯示
+            manager.InitializeInfo();   //遊戲初始化
+            //指定初始圖片
             for (int i = 0; i < startScenceButton.Length; i++)
             {
                 startScenceButton[i].image.sprite = originalImage[i];
@@ -55,28 +52,48 @@ namespace FourCarvings
             StartButton.OnDown -= theMouseDown;
         }
 
+        #region 點擊按鈕切換圖片
+
+        public void theMouseDown(int id)
+        {
+            startScenceButton[id].image.sprite = changeImage[id];
+        }
+
+        public void theMouseUp(int id)
+        {
+            startScenceButton[id].image.sprite = originalImage[id];
+        }
+        #endregion
+
         void NewGame()
         {
+            Debug.Log("開始新遊戲");
             SceneManager.LoadScene(1);      //跳轉到序章
             manager.InitializeInfo();       //遊戲資料初始化
         }
 
+        //讀取自動存檔
         void ContinueGame()
         {
-            CheckForAutoFile(Application.persistentDataPath, 0);
+            Debug.Log("繼續遊戲");
+            CheckForAutoFile(Application.persistentDataPath, 0);    
         }
 
         //讀檔-調用讀檔面板
         void LoadGame()
         {
-            
-            manager.SaveCanvas(true);
+            Debug.Log("讀取遊戲");
+            manager.ShowSaveCanvas(true);   //存讀檔面板顯示
             manager.isLoad = true;
+            manager.ChangeCanvasImage(true);
+            Debug.Log($"isload為{manager.isLoad}");
+            Debug.Log($"存讀面板的圖片為{manager.saveLoadPanel.sprite.name}");
         }
 
         //退出遊戲
         void ExitGame()
         {
+            Debug.Log("離開遊戲");
             manager.QuitGame();
         }
 
@@ -103,15 +120,7 @@ namespace FourCarvings
             }
         }
 
-        public void theMouseDown(int id)
-        {
-            startScenceButton[id].image.sprite = changeImage[id];
-        }
-
-        public void theMouseUp(int id)
-        {
-            startScenceButton[id].image.sprite = originalImage[id];
-        }
+       
 
 
     }

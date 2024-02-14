@@ -52,6 +52,7 @@ namespace FourCarvings
 
         private void Start()
         {
+            
             //資料初始化
             InitializeInfo();
 
@@ -73,20 +74,44 @@ namespace FourCarvings
             isSave = OnSave;
             isLoad = !OnSave;
             //切換面板
+            
             if (isLoad == true)
             {
-                saveLoadPanel.sprite = loadPanel;
+                Debug.Log("目前為讀檔模式");
+                ChangeCanvasImage(isLoad);
             }
             else
             {
-                saveLoadPanel.sprite = savePanel;
+                Debug.Log("目前為存檔模式");
+                ChangeCanvasImage(isLoad);
             }
+            
             //開啟面板
-            SaveCanvas(true);
+            ShowSaveCanvas(true);
 
         }
-
-        public void SaveCanvas(bool _fade = true)
+        /// <summary>
+        /// 更改存讀檔面板圖片
+        /// </summary>
+        /// <param name="_change"></param>
+        public void ChangeCanvasImage(bool _change)
+        {
+            if (_change)
+            {
+                Debug.Log("更換為讀檔面板圖片");
+                saveLoadPanel.sprite = loadPanel;
+            }
+            else if(_change==false)
+            {
+                Debug.Log("更換為存檔面板圖片");
+                saveLoadPanel.sprite = savePanel;
+            }
+        }
+        /// <summary>
+        /// 是否顯示存讀面板
+        /// </summary>
+        /// <param name="_fade"></param>
+        public void ShowSaveCanvas(bool _fade = true)
         {
             if (_fade==true)
             {
@@ -165,6 +190,7 @@ namespace FourCarvings
 
         /// <summary>
         /// 讀檔_左鍵點擊存檔欄
+        /// 將讀取的檔案返回成遊戲數據
         /// </summary>
         /// <param name="filePath">檔按路徑</param>
         public void ForLoad(string filePath)
@@ -182,7 +208,11 @@ namespace FourCarvings
                 SetSceneceName(saveData.scenceName);
  
                 Debug.Log($"讀檔成功，檔案名為{filePath}");
-            }    
+            }
+            else
+            {
+                Debug.Log("讀取的檔案不存在");
+            }
         }
 
         #endregion
@@ -214,7 +244,9 @@ namespace FourCarvings
                         Debug.Log("已刪除 .save 檔案: " + file);
                         File.Delete(file);
                     }
+                    Debug.Log("找不到可刪除的檔案");
                 }
+                
             }
             else
             {
@@ -235,7 +267,7 @@ namespace FourCarvings
             receiveSaveData.gameTime = 0f;
             receiveSaveData.playerPosition = new Vector2(-18.11f, 2.96f);
             SaveData.Instance.scenceName = "A-開始畫面";
-            SaveCanvas(false);
+            ShowSaveCanvas(false);
         }
 
         //將存的遊戲時長付於實質遊戲時長 (用於ForLoad)
@@ -253,11 +285,14 @@ namespace FourCarvings
             return nowScenceName;
         }
 
+        /*
         private void GetPropsState()
         {
 
         }
+        */
 
+        //  將儲存的場景賦值於遊戲內場景
         private void SetSceneceName(string scenceName)
         {
             SaveData.Instance.scenceName = scenceName;
@@ -273,11 +308,12 @@ namespace FourCarvings
 
         #endregion
 
-
+        
 
         //檢查是否存檔欄已有檔案，如果已有按編號刪除 (用於:ForSave)
         private void CheckForSaveFile(string filepath,int id)
         {
+            
             // 確保路徑存在
             if (Directory.Exists(filepath))
             {
@@ -302,6 +338,7 @@ namespace FourCarvings
                         Debug.Log("找到 .save 檔案: " + filePath);
                         File.Delete(filePath);
                     }
+                    Debug.Log("找不到自動存檔的檔案");
                 }
             }
             else

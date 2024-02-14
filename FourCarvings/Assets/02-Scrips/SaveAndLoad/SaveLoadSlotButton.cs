@@ -49,6 +49,7 @@ namespace FourCarvings
         private void Start()
         {
             //UI初始化
+            //時間隱藏
             astive_gameDate.gameObject.SetActive(false);
             astive_gameTime.gameObject.SetActive(false);
 
@@ -83,6 +84,7 @@ namespace FourCarvings
             {
                 Debug.LogWarning("指定的路徑不存在: " + saveFilePath);
             }
+            
 
         }
 
@@ -122,7 +124,7 @@ namespace FourCarvings
                 {
                     Debug.Log($"現在是讀檔模式{manager.isLoad}");
                     CheckForLoadFile(saveFilePath,id);      //讀檔
-                    manager.SaveCanvas(false);              //面板關閉
+                    manager.ShowSaveCanvas(false);              //面板關閉
 
                     if (SceneManager.GetActiveScene().name != SaveData.Instance.scenceName)
                     {
@@ -229,6 +231,7 @@ namespace FourCarvings
             }
 
         }
+
         //更新存檔欄UI-用於刪除檔案
         public void UpdateUIInfoForDelete(int i)
         {
@@ -252,23 +255,30 @@ namespace FourCarvings
             // 確保路徑存在
             if (Directory.Exists(filepath))
             {
+                Debug.Log("讀取檔案中");
                 // 取得目錄中的所有檔案
                 string[] files = Directory.GetFiles(filepath);
 
                 // 遍歷所有檔案
                 foreach (string filePath in files)
                 {
+                    Debug.Log($"點選欄位ID{id}");
                     if (Path.GetExtension(filePath) == ".save01" && id==1)
                     {
-                        manager.ForLoad(filePath);                  
+                        Debug.Log($"讀檔成功，檔案名為{filePath}");
+                        manager.ForLoad(filePath);
+                        break;
                     }
 
                     if (Path.GetExtension(filePath) == ".save02" && id == 2)
                     {
+                        Debug.Log($"讀檔成功，檔案名為{filePath}");
                         manager.ForLoad(filePath);
+                        break;
                     }
-
-                    break;
+                    
+                    Debug.Log("未讀取到相對應的檔案");
+                    
                 }
             }
             else
