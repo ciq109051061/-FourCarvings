@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 167cd23d5e4bf6c4e9cae6a1377fc717, type: 3}
   m_Name: fox
   m_EditorClassIdentifier: 
+  itemID: 1
   itemName: ???
   itemImage: {fileID: 21300000, guid: a7baa49181c82d449b763a17cd5ab9f4, type: 3}
   itemHeld: 1

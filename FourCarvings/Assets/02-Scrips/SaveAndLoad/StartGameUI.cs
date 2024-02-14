@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.EventSystems;
 
 namespace FourCarvings
 {
@@ -13,83 +12,108 @@ namespace FourCarvings
     public class StartGameUI : MonoBehaviour
     {
         public SaveLoadManager manager;
+        //public GameObject saveloadPanel;
 
-        public GameObject saveloadPanel;
-
+        /*
         [Header("開始面板按鈕")]
         public Button NewButton; //新遊戲
         public Button ContinueButton; //繼續遊戲
         public Button LoadButton; //讀取遊戲
         public Button ExitButton; //離開遊戲
+        */
 
+        public Button[] startScenceButton = new Button[4];
+        public Sprite[] originalImage = new Sprite[4];
+        public Sprite[] changeImage = new Sprite[4];
 
         private void Awake()
         {
             manager.InitializeInfo();
-            NewButton.onClick.AddListener(NewGame);
-            ContinueButton.onClick.AddListener(ContinueGame);
-            LoadButton.onClick.AddListener(LoadGame);
-            ExitButton.onClick.AddListener(ExitGame);
+
+            #region 監聽
+            StartButton.OnUp += theMouseUp;
+            StartButton.OnDown += theMouseDown;
+            startScenceButton[0].onClick.AddListener(NewGame);
+            startScenceButton[1].onClick.AddListener(ContinueGame);
+            startScenceButton[2].onClick.AddListener(LoadGame);
+            startScenceButton[3].onClick.AddListener(ExitGame);
+            #endregion
         }
         private void Start()
         {
-            saveloadPanel.SetActive(false);
+            //saveloadPanel.GetComponent<CanvasGroup>().alpha = 0;
+            manager.SaveCanvas(false);
+            for (int i = 0; i < startScenceButton.Length; i++)
+            {
+                startScenceButton[i].image.sprite = originalImage[i];
+            }
+        }
+
+        private void OnDestroy()
+        {
+            StartButton.OnUp -= theMouseUp;
+            StartButton.OnDown -= theMouseDown;
         }
 
         void NewGame()
         {
-            SceneManager.LoadScene(1);
-            manager.InitializeInfo();
-            //TO-DO 初始化資料方法
+            SceneManager.LoadScene(1);      //跳轉到序章
+            manager.InitializeInfo();       //遊戲資料初始化
         }
 
         void ContinueGame()
         {
             CheckForAutoFile(Application.persistentDataPath, 0);
-            //TO-DO 讀取自動檔，無則NewGame()
         }
 
+        //讀檔-調用讀檔面板
         void LoadGame()
         {
-            saveloadPanel.SetActive(true);
+            
+            manager.SaveCanvas(true);
             manager.isLoad = true;
-            //TO-DO 調用讀檔面板
         }
 
+        //退出遊戲
         void ExitGame()
         {
-
             manager.QuitGame();
-
         }
 
+        //查詢自動檔
         private void CheckForAutoFile(string filepath, int id)
         {
-            // 確保路徑存在
             if (Directory.Exists(filepath))
             {
-                // 取得目錄中的所有檔案
                 string[] files = Directory.GetFiles(filepath);
-
-                // 遍歷所有檔案
                 foreach (string filePath in files)
                 {
-                    // 檢查副檔名是否為 ".save"
                     if (Path.GetExtension(filePath) == ".auto" && id == 0)
                     {
-                        // 在這裡處理找到 ".save" 檔案的邏輯
                         manager.ForLoad(filePath);
-                        break;
+                        Debug.Log($"成功繼續遊戲，檔案:{filePath}");
                     }
-
-                    
+                    break;
                 }
             }
             else
             {
-                Debug.LogWarning("指定的路徑不存在: " + filepath);
+                Debug.Log("找不到自動檔，開啟新遊戲");
+                NewGame();
             }
         }
+
+        public void theMouseDown(int id)
+        {
+            startScenceButton[id].image.sprite = changeImage[id];
+        }
+
+        public void theMouseUp(int id)
+        {
+            startScenceButton[id].image.sprite = originalImage[id];
+        }
+
+
     }
 
 }

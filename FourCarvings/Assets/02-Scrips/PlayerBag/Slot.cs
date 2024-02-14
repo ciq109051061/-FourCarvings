@@ -1,83 +1,80 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 namespace FourCarvings
 {
-
-    public class Slot : MonoBehaviour
+    /// <summary>
+    /// 物品格
+    /// </summary>
+    public class Slot : MonoBehaviour, IPointerClickHandler
     {
+        #region 變數
+
         public Item sloyItem;
 
-        public Image slotImage;
+        [Header("預製物UI")]
+        public Image slotImage;             //背包格_物品圖片
+        public TextMeshProUGUI slotNum;     //背包格_物品持有數
 
-       // public Button useButton;
+        [HideInInspector]
+        public static System.Action OnLeftClick;
+        //public int slotID;
 
-        public TextMeshProUGUI slotNum;
+        #endregion
 
-        //public string slotName;
-
-        //public TextAsset propsTextAsset;
-
-       // public string[] propsRows;
-
-        //public InventoryManager it;
-
-        //public Button useButton;
+        #region 訂閱滑鼠點擊事件
 
         private void Start()
         {
-           // useButton.gameObject.SetActive(false);
-            //slotName = sloyItem.itemName;
+            OnLeftClick += OnClick;
+            
         }
+
+        private void OnDestroy()
+        {
+            OnLeftClick -= OnClick;           
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Left)
+            {
+                if (OnLeftClick != null)
+                    OnClick();
+            }
+            
+        }
+
+        #endregion
+
+        //點擊物品格查看物品
+        private void OnClick()
+        {
+            //更新資訊頁及物品ID
+            InventoryManager.Instance.UpdateItemImage(sloyItem.itemImage);
+            InventoryManager.Instance.UpdateItemName(sloyItem.itemName);
+            Debug.Log($"Slot中的物品名字{sloyItem.itemName}");
+            InventoryManager.Instance.UpdateItemInfo(sloyItem.itemInfo);
+            InventoryManager.Instance.UpdateItemID(sloyItem.itemID);
+            Debug.Log($"Slot中的物品編號{sloyItem.itemID}");
+        }
+
+        //更新持有數UI
+        public void UpdateCount(Item item)
+        {
+            GameObject newSlot = GameObject.Find(item.itemName);
+            Debug.Log($"newSlot名字{newSlot.name}");
+            Debug.Log("成功改變持有數UI");
+            newSlot.GetComponent<Slot>().slotNum.text = item.itemHeld.ToString();
+            //slotNum.text = item.itemHeld.ToString();
+
+            
+        }
+
         
 
-        public void ItemOnClick()
-        {
-            Debug.Log("���~�Q�I��");
-            //Debug.Log(slotName);
-            InventoryManager.UpdataItemInfo(sloyItem.itemInfo);
 
-            InventoryManager.UpdataUI_Image(sloyItem.itemImage) ;
-
-            InventoryManager.Updata_ItemName(sloyItem.itemName);
-
-            //slotName = sloyItem.itemName;
-            //useButton.gameObject.SetActive(true);
-            
-        }
-        /*
-        public void UseOnClick()
-        {
-            DestroyImmediate(this.gameObject, true);
-        }
-        */
-        /*
-        public void ReadPropsText(TextAsset _textAsset)
-        {
-            propsRows = _textAsset.text.Split('\n');
-            Debug.Log("�D��ĥ�Ū�����\");
-            
-        }
-
-        public void UseProps()
-        {
-            ReadPropsText(propsTextAsset);
-            for (int i = 0; i < propsRows.Length; i++)
-            {
-                string[] cells = propsRows[i].Split(',');
-                if (cells[0] == slotName)
-                {                    
-                    Debug.Log("�D��W�r�ǰt���\");
-                    if (cells[1] == "�q��")
-                    {
-                        GameObject.Find("�ʦL�B").gameObject.SetActive(false);
-                    }
-                }
-            }
-        }
-        */
     }
 }

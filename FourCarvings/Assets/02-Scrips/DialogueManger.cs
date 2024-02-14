@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine.UI;
 using System;
 using System.Text.RegularExpressions;
+using UnityEngine.SceneManagement;
 
 namespace FourCarvings
 {
@@ -19,7 +20,7 @@ namespace FourCarvings
     {
         #region 資料區
 
-        static DialogueManger instance;
+        public static DialogueManger Instance;
 
         /// <summary>
         /// 對話表格
@@ -88,6 +89,9 @@ namespace FourCarvings
 
         public static bool speed=false;
 
+        public bool dialogueDown = false;
+
+        public CanvasGroup mainCanvas;
 
         #endregion
 
@@ -95,24 +99,26 @@ namespace FourCarvings
         {
             ImageDic["小精靈"] = sprites[0];
             ImageDic["守護者"] = sprites[1];
-            
-        }
-        private void Start()
-        {
-                       
+            ImageDic["貝爾"] = sprites[2];
+            ImageDic["棕熊"] = sprites[2];
+
         }
 
+        
+ 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             //如果偵測到玩家，開始對話
             if (collision.gameObject.CompareTag("Player"))
             {
-                StartCoroutine(CanvasFade());
+                //StartCoroutine(CanvasFade());
+                dialogGroup.alpha = 1;
                 Debug.Log("對話偵測成功");
                 ReadText(dialogDataFile);
                 ShowDialogue();
                 present = true;                
-                OnSpace = true;
+                //OnSpace = true;
+                mainCanvas.alpha = 0;
 
             }
         }
@@ -176,27 +182,59 @@ namespace FourCarvings
         {
             for (int i = 0; i < dialogRows.Length; i++)
             {
+                Debug.Log($"Processing line {i + 1} of {dialogRows.Length}");
+                dialogueDown = false;
                 string[] cells = dialogRows[i].Split(',');
                 if (cells[0] == "#" && int.Parse(cells[1]) == dialogIndex)
                 {
+                    OnSpace = false;
+                    Debug.Log("Found matching dialogue!");
                     UpdataText(cells[2], cells[4]);
                     UpadataImage(cells[2], cells[3]);
                     //跳轉索引值
+                    OnSpace = true;
                     dialogIndex = int.Parse(cells[5]);
+                    dialogueDown = true;
                     break;
                 }
                 else if (cells[0] == "&" && int.Parse(cells[1]) == dialogIndex)
                 {
                     GenerateOption(i);
+                    dialogueDown = true;
                 }
                 else if (cells[0] == "END" && int.Parse(cells[1]) == dialogIndex)
                 {
                     Debug.Log("劇情結束");
-                    StartCoroutine(CanvasFade(false));
+                    //StartCoroutine(CanvasFade(false));
+                    dialogGroup.alpha = 0;
                     present = false;
                     OnSpace = false;
                     //關閉對話偵測點，避免重複對話
                     detectionPoint.enabled = false;
+                    mainCanvas.alpha = 1;
+                    if (dialogDataFile.name == "找到鑰匙")
+                    {
+                        Debug.Log("鑰匙劇情撥放完畢");
+                        KeyPrep.keyDialogueIsFinish = true;
+                        Debug.Log($"鑰匙劇情{KeyPrep.keyDialogueIsFinish}");
+                        SceneManager.LoadScene(3);
+                    }
+                    if (dialogDataFile.name == "第二章開頭")
+                    {
+                        GPM_Level_2.StartTextDone = true;
+                    }
+                    if (dialogDataFile.name == "敲門聲響起後")
+                    {
+                        GPM_Level_2.KnockTextDone = true;
+                    }
+                    if (dialogDataFile.name == "熊熊出門後")
+                    {
+                        GPM_Level_2.SerchOrNotTextDonw = true;
+                    }
+                    if (dialogDataFile.name == "熊熊回來")
+                    {
+                        GPM_Level_2.timeOverTextDone = true;
+                    }
                 }
             }
         }
@@ -295,8 +333,22 @@ namespace FourCarvings
                     Debug.Log("傳送守護者加速度");
                 }
             }
+            if(_effect=="探索")
+            {
+                GPM_Level_2.SerchOrNot = true;
+                Debug.Log($"選擇探索{GPM_Level_2.SerchOrNot}");
+            }
+            if(_effect=="不探索")
+            {
+                GPM_Level_2.SerchOrNot = false;
+                Debug.Log("選擇不探索");
+            }
         }
 
-
+        IEnumerator WaitAndContinue(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            // 繼續執行相應的代碼
+        }
     }
 }

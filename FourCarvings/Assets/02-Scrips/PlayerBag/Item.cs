@@ -1,20 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Rendering;
+﻿using UnityEngine;
 
 namespace FourCarvings
 {
     [CreateAssetMenu(fileName ="New Item",menuName = "FourCarvings/New Item")]
     public class Item : ScriptableObject
     {
-        public string itemName;
+        public int itemID; //物品ID與物品效果搭配
 
-        public Sprite itemImage;
+        public string itemName; //物品名字
 
-        public int itemHeld;
+        public Sprite itemImage; //物品圖片
+
+        public int itemHeld; //物品數量
 
         [TextArea]
-        public string itemInfo;
+        public string itemInfo; //物品資訊
+
     }
 }

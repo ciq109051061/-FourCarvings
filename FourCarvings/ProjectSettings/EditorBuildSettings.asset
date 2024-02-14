@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: "Assets/01-Scence/C-\u7B2C\u4E00\u95DC_\u5C71\u6D1E.unity"
     guid: 5d04c2c7f1e134648bced87305f7a376
   - enabled: 1
-    path: "Assets/01-Scence/D-\u7B2C\u4E8C\u7AE0_\u68EE\u6797.unity"
-    guid: 88f0430193e85fc44b53b57f765c3dd6
+    path: "Assets/01-Scence/E-\u7B2C\u4E8C\u7AE0_\u5BA4\u5167.unity"
+    guid: 674bb6a9e2aec6742819f935ba4b8ed9
+  - enabled: 1
+    path: "Assets/01-Scence/G-\u5927\u5730\u5716.unity"
+    guid: 2731bbc723b7e5e45acbaa6f77d54ae8
   m_configObjects: {}

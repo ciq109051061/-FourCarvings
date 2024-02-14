@@ -1,11 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace FourCarvings
 {
-
+    /// <summary>
+    /// 日期與時間
+    /// </summary>
     public class TimeFormat : MonoBehaviour
     {
         public static float oriT;  //起始時間

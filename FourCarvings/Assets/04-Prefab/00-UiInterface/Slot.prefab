@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 73, y: -33}
+  m_AnchoredPosition: {x: 104.8, y: -38.8}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7657108116891542696
@@ -75,8 +75,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4283190392
-  m_fontColor: {r: 0.4716981, g: 0.29992878, b: 0.29992878, a: 1}
+    rgba: 4278979651
+  m_fontColor: {r: 0.26415092, g: 0.045852605, b: 0.045852605, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -284,8 +284,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sloyItem: {fileID: 0}
   slotImage: {fileID: 8382260238347000049}
-  useButton: {fileID: 0}
   slotNum: {fileID: 2037041279305472032}
-  slotName: 
-  propsTextAsset: {fileID: 4900000, guid: df4be8427ca785848874a3378f9bb3fc, type: 3}
-  propsRows: []
+  slotID: 0

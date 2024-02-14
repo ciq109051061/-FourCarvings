@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,35 +7,34 @@ using UnityEngine.SceneManagement;
 
 namespace FourCarvings
 {
-
+    /// <summary>
+    /// 存讀檔格操作
+    /// </summary>
     public class SaveLoadSlotButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
 
-        #region 變量
+        #region 變數
 
-        //腳本
+        [Header("腳本")]
         public SaveLoadManager manager;
 
-        //public GameObject saveAndLoadPanel;
-
-        //UI
+        [Header("UI")]
         public TextMeshProUGUI text_gameDate;   //日期
         public TextMeshProUGUI text_gameTime;   //時間
         public TextMeshProUGUI astive_gameDate; //中文_日期
         public TextMeshProUGUI astive_gameTime; //中文_時間
         public Image screenShot;                //截圖
         public Image rect;                      //邊框
-        
+
+        [Header("資源")]
         public Color enterColor;                //鼠標進入存檔時的邊框顏色
         public Sprite saveOri;                  //存檔欄默認圖片
         
-        //資料接收
-        public string saveFilePath;         //存檔路徑
-        public int id;                      //檔位編號
-
-        //接口
-        public static System.Action<int> OnLeftClick;
+        [HideInInspector]
+        public static System.Action<int> OnLeftClick;      //接口 
         public static System.Action<int> OnRightClick;
+        public string saveFilePath;         //存檔路徑      //資料接收
+        public int id;                      //檔位編號
 
         #endregion
 
@@ -51,6 +48,7 @@ namespace FourCarvings
 
         private void Start()
         {
+            //UI初始化
             astive_gameDate.gameObject.SetActive(false);
             astive_gameTime.gameObject.SetActive(false);
 
@@ -59,26 +57,25 @@ namespace FourCarvings
             TimeFormat.SetOriTime();                //時間開始
             
             //查找檔案，讀取檔案資料，將儲存面板復原
-            //這裡發現，讀取資料連同遊戲資料，不知道會不會出錯，如果出錯的話要寫一個專門讀取UI資料的方法
             if (Directory.Exists(saveFilePath))
             {
-                // 取得目錄中的所有檔案
                 string[] files = Directory.GetFiles(saveFilePath);
 
-                // 遍歷所有檔案
                 foreach (string filePath in files)
                 {
-                    // 檢查副檔名是否為 ".save"
+
+                    if (Path.GetExtension(filePath) == ".auto" && id == 0)
+                    {
+                        UpdateUIInfoForStart(id);          // 更新UI介面
+                    }
                     if (Path.GetExtension(filePath) == ".save01" && id == 1)
                     {
-                        //manager.ForLoad(filePath);  // 讀取存檔資料
-                        UpdataUIInfo(id);           // 更新UI介面
+                        UpdateUIInfoForStart(id);           // 更新UI介面
                     }
 
                     if (Path.GetExtension(filePath) == ".save02" && id == 2)
                     {
-                        //manager.ForLoad(filePath);   // 讀取存檔資料
-                        UpdataUIInfo(id);            // 更新UI介面
+                        UpdateUIInfoForStart(id);           // 更新UI介面
                     }
                 }
             }
@@ -88,6 +85,7 @@ namespace FourCarvings
             }
 
         }
+
         private void Update()
         {
             TimeFormat.SetCurTime();        //時間結束
@@ -99,65 +97,96 @@ namespace FourCarvings
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            //左鍵點擊-存檔、讀檔
+            #region 左鍵點擊
+    
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                Debug.Log($"現在是存檔模式{manager.isSave}");
-
+                //存檔
                 if (manager.isSave==true)
                 {
-                    manager.ForSave(id);        //存檔
-                    UpdataUIInfo(id);           //更新存檔欄UI
-                    
+                    Debug.Log($"現在是存檔模式{manager.isSave}");
+                    if(id !=0)
+                    {
+                        manager.ForSave(id);        //存檔
+                        UpdateUIInfo(id);           //更新存檔欄UI
+                    }
+                    else
+                    {
+                        Debug.Log("自動存檔不可點擊");
+                        return;
+                    }
+                  
                 }
-
-                Debug.Log($"現在是讀檔模式{manager.isLoad}");
-
-                
+                //讀檔
                 if (manager.isLoad == true)
                 {
-
+                    Debug.Log($"現在是讀檔模式{manager.isLoad}");
                     CheckForLoadFile(saveFilePath,id);      //讀檔
-                    TimeFormat.SetOriTime();                //時間開始
+                    manager.SaveCanvas(false);              //面板關閉
 
-                    manager.saveloadCanvas.gameObject.SetActive(false);
                     if (SceneManager.GetActiveScene().name != SaveData.Instance.scenceName)
                     {
                         SceneManager.LoadScene(SaveData.Instance.scenceName);
+                        Debug.Log($"場景名不符合，現在場景名:{SceneManager.GetActiveScene().name}，儲存場景名:{SaveData.Instance.scenceName}");
                     }
-                }
-                
+                    else
+                    {
+                        Debug.Log($"場景名符合，無須跳轉場景");
+                    }
 
+                    TimeFormat.SetOriTime();                //時間開始(重新計算)
+                }
             }
 
-            //右鍵點擊刪除檔案
+            #endregion
+
+            #region 右鍵點擊
+
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                manager.DeleteSave(saveFilePath, id);
-                manager.DeleteShot(id);
-                UpdataUIInfoForDelete(id);
-                //TO-DO 刪除截圖
-                
+                //刪除檔案
+                if (id !=0)
+                {
+                    manager.DeleteSave(saveFilePath, id);       //刪儲存檔
+                    manager.DeleteShot(id);                     //刪除截圖
+                    UpdateUIInfoForDelete(id);                  //更新UI面板
+                }
+                else
+                {
+                    Debug.Log("自動檔不可刪");
+                    return;
+                }
+    
             }
+
+            #endregion
         }
+
+        #region 滑鼠變色
 
         //滑鼠進入變色
         public void OnPointerEnter(PointerEventData eventData)
         {
-            rect.color = enterColor;
+            if (id != 0)
+                rect.color = enterColor;
         }
 
         //滑鼠離開變色
         public void OnPointerExit(PointerEventData eventData)
         {
-            rect.color = Color.white;
+            if (id != 0)
+                rect.color = Color.white;
         }
+        #endregion
 
         #endregion
 
-        //更新存檔欄UI
-        public void UpdataUIInfo(int i)
+        #region 更新存讀檔面板
+
+        //更新存檔欄UI-帶截圖-用於存檔
+        public void UpdateUIInfo(int i)
         {
+            //UI激活
             astive_gameDate.gameObject.SetActive(true);
             astive_gameTime.gameObject.SetActive(true);
 
@@ -174,7 +203,34 @@ namespace FourCarvings
 
         }
 
-        public void UpdataUIInfoForDelete(int i)
+        //更新存檔欄UI-不帶截圖-用於一開始加載UI面板
+        public void UpdateUIInfoForStart(int i)
+        {
+            //UI激活
+            astive_gameDate.gameObject.SetActive(true);
+            astive_gameTime.gameObject.SetActive(true);
+
+            string shotPath = $"{Application.persistentDataPath}/shot";
+            string imageName = $"{i}.png";
+            string imagePath = Path.Combine(shotPath, imageName);
+
+            if (File.Exists(imagePath))
+            {
+                byte[] imageData = File.ReadAllBytes(imagePath);
+                Texture2D texture = new Texture2D(411, 311);
+                texture.LoadImage(imageData);
+                screenShot.sprite= Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                Debug.Log("找到圖片且加載成功");
+            }
+            else
+            {
+                Debug.Log("找不到圖片");
+                return;
+            }
+
+        }
+        //更新存檔欄UI-用於刪除檔案
+        public void UpdateUIInfoForDelete(int i)
         {
             if (i==id)
             {
@@ -188,6 +244,8 @@ namespace FourCarvings
             
         }
 
+        #endregion
+
         //按編號讀取檔案
         private void CheckForLoadFile(string filepath,int id)
         {
@@ -200,18 +258,17 @@ namespace FourCarvings
                 // 遍歷所有檔案
                 foreach (string filePath in files)
                 {
-                    // 檢查副檔名是否為 ".save"
                     if (Path.GetExtension(filePath) == ".save01" && id==1)
                     {
-                        // 在這裡處理找到 ".save" 檔案的邏輯
-                        manager.ForLoad(filePath);
-                        break;
+                        manager.ForLoad(filePath);                  
                     }
 
                     if (Path.GetExtension(filePath) == ".save02" && id == 2)
                     {
                         manager.ForLoad(filePath);
                     }
+
+                    break;
                 }
             }
             else
@@ -219,6 +276,7 @@ namespace FourCarvings
                 Debug.LogWarning("指定的路徑不存在: " + filepath);
             }
         }
+
 
     }
     

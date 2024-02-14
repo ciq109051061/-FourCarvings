@@ -1,61 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace FourCarvings
 {
+
+    /// <summary>
+    /// 點擊地圖上物品
+    /// </summary>
     public class ItemOnWorld : MonoBehaviour
     {
         public Item thisItem;
-        public Inventory playerInventory;
-        public Slot slot;
-
-       //public AudioClip slecet;
-
-       // public AudioSource onWorldSource;
-
-        private void Awake()
-        {
-           // onWorldSource = gameObject.AddComponent<AudioSource>();
-        }
 
         private void OnMouseDown()
         {
-            AddNewItem();
+            InventoryManager.Instance.AddItemToInventory(thisItem);
 
-            //OnWorldAudio();
-
+            //Debug.Log($"找到slot{GameObject.Find($"{thisItem.itemName}").gameObject.name}");
             AudioManager.OnWorldAudio();
 
             Destroy(gameObject);
-
         }
-
-        public void AddNewItem()
-        {
-            if(!playerInventory.itemList.Contains(thisItem))
-            {
-                playerInventory.itemList.Add(thisItem);
-                //InventoryManager.CreatNewItem(thisItem);
-
-            }
-            else
-            {
-                thisItem.itemHeld += 1;
-                //slot.slotNum.text = thisItem.itemHeld.ToString();
-                //Debug.Log(slot.slotNum);
-            }
-            InventoryManager.RefeshItem();
-        }
-
-        /*
-        public void OnWorldAudio()
-        {
-            onWorldSource.clip = slecet;
-            onWorldSource.Play();
-            Debug.Log("���ļ��񦨥\");
-        }
-        */
-        
+     
     }
 }

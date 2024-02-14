@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 167cd23d5e4bf6c4e9cae6a1377fc717, type: 3}
   m_Name: PassCard
   m_EditorClassIdentifier: 
+  itemID: 2
   itemName: "\u5C71\u6D1E\u901A\u884C\u8B49"
   itemImage: {fileID: 21300000, guid: 9ceef9972388b82498c4346d74133002, type: 3}
   itemHeld: 1

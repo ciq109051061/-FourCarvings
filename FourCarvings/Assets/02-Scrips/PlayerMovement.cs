@@ -28,10 +28,7 @@ namespace FourCarvings
         /// 玩家Animator
         /// </summary>
         public Animator animator;
-        /// <summary>
-        /// 玩家背包
-        /// </summary>
-        public GameObject playerBag;
+        
         /// <summary>
         /// 背包開關
         /// </summary>
@@ -80,9 +77,11 @@ namespace FourCarvings
                
             }
 
-            OpenPlayerBag();
+            
 
         }
+
+        
 
         private void FixedUpdate()
         {
@@ -93,18 +92,7 @@ namespace FourCarvings
             
         }
 
-        /// <summary>
-        /// 背包顯示方法
-        /// </summary>
-        public void OpenPlayerBag()
-        {
-            //按下O鍵開關背包
-            if(Input.GetKeyDown(KeyCode.O))
-            {
-                isOpen = !isOpen;
-                playerBag.SetActive(isOpen);
-            }
-        }
+        
 
         /// <summary>
         /// 腳步音效

@@ -1,11 +1,6 @@
-using FourCarvings;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 using UnityEngine.SceneManagement;
 
 namespace FourCarvings
@@ -13,46 +8,42 @@ namespace FourCarvings
 
     public class SaveLoadManager : MonoBehaviour
     {
-        #region 變量
 
-        //腳本
+        #region 變數
+        public GameObject player;
+
+        [Header("腳本")]
         public SaveData autoSaveData; //自動檔資料更新器
         public SaveData receiveSaveData;
         public SaveLoadSlotButton saveLoadSlotButton;
-        
 
-        //路徑
-        public string savePath;          //存檔路徑
-        public static string shotPath;   //截圖路徑
-        string[] fileExtension = {".auto", ".save01", ".save02" }; //副檔名(用於判斷存檔欄)
-
-        //UI介面
+        [Header("UI")]
         public Image saveLoadPanel;  //存讀檔面板 (用於切換面板圖片)
         public Sprite savePanel;     //存檔面板圖片
         public Sprite loadPanel;     //讀檔面板圖片
-        public Canvas saveloadCanvas;
-        
+        public CanvasGroup saveloadCanvas;
 
-        //按鈕
+        [Header("按鈕")]
         public Button isSaveButton;
         public Button isLoadButton;
 
-        //判斷
+        [HideInInspector]
         public bool isSave = false;
+        [HideInInspector]
         public bool isLoad = false;
-
-        public GameObject player;
+        [HideInInspector]
+        public string savePath;          //存檔路徑
+        public static string shotPath;   //截圖路徑
+        string[] fileExtension = {".auto", ".save01", ".save02" }; //副檔名(用於判斷存檔欄)
 
         #endregion
 
         private void Awake()
         {
-            
-            //player = GameObject.Find("守護者").GetComponent<GameObject>();
-            //指定存檔路徑
+            //指定路徑
             savePath = Application.persistentDataPath; 
             shotPath = $"{Application.persistentDataPath}/shot";
-            //為什麼要建立目錄?
+            //建立目錄
             if (!Directory.Exists(savePath))
             {
                Directory.CreateDirectory(savePath); 
@@ -65,23 +56,24 @@ namespace FourCarvings
             InitializeInfo();
 
             //按鈕監聽
-            isSaveButton.onClick.AddListener(() => SaveOrLoad());
+            isSaveButton.onClick.AddListener(() => SaveOrLoad(true));
             isLoadButton.onClick.AddListener(() => SaveOrLoad(false));
 
         }
- 
+
+        #region 面板及模式判斷
+
         /// <summary>
         /// 判斷存檔or讀檔
         /// </summary>
         /// <param name="OnSave">外部接收bool值</param>
-        public void SaveOrLoad(bool OnSave = true)
+        public void SaveOrLoad(bool OnSave)
         {
+            //判斷存讀檔
             isSave = OnSave;
             isLoad = !OnSave;
-
-            //依照模式切換存讀檔(未起效用)
-            saveloadCanvas.gameObject.SetActive(true);
-            if (isLoad == OnSave)
+            //切換面板
+            if (isLoad == true)
             {
                 saveLoadPanel.sprite = loadPanel;
             }
@@ -89,10 +81,30 @@ namespace FourCarvings
             {
                 saveLoadPanel.sprite = savePanel;
             }
+            //開啟面板
+            SaveCanvas(true);
 
         }
 
+        public void SaveCanvas(bool _fade = true)
+        {
+            if (_fade==true)
+            {
+                saveloadCanvas.alpha = 1;
+            }
+
+            if (_fade==false)
+            {
+                saveloadCanvas.alpha = 0;
+            }
+
+        }
+
+        #endregion
+
         #region 核心功能-存/讀/刪 檔
+
+        #region 存檔
 
         /// <summary>
         /// 存檔_左鍵點擊存檔欄
@@ -118,8 +130,6 @@ namespace FourCarvings
             };
 
             Debug.Log($"點擊的存檔欄編號{index}");
-
-            Debug.Log($"這是儲存的玩家位置{PlayerMovement.finalMovent}");
 
             //依存檔欄編號給予不同後綴名(用於:判斷後綴名就可以知道是哪一個存檔欄)
             if (index == 0)
@@ -149,6 +159,10 @@ namespace FourCarvings
             }
         }
 
+        #endregion
+
+        #region 讀檔
+
         /// <summary>
         /// 讀檔_左鍵點擊存檔欄
         /// </summary>
@@ -166,20 +180,16 @@ namespace FourCarvings
                 SetGameDuration(saveData.gameTime);             //遊戲時長
                 SetPlayerPosition(saveData.playerPosition);     //玩家位置
                 SetSceneceName(saveData.scenceName);
-                
-
-
+ 
                 Debug.Log($"讀檔成功，檔案名為{filePath}");
-            }
-
-            
-
+            }    
         }
 
-        
+        #endregion
 
+        #region 刪檔
 
-        public  void DeleteSave(string filePath,int id)
+        public void DeleteSave(string filePath,int id)
         {
             if (Directory.Exists(filePath))
             {
@@ -215,6 +225,19 @@ namespace FourCarvings
 
         #endregion
 
+        #endregion
+
+        #region 遊戲資料
+
+        //初始化遊戲資料 (用於:Start)
+        public void InitializeInfo()
+        {
+            receiveSaveData.gameTime = 0f;
+            receiveSaveData.playerPosition = new Vector2(-18.11f, 2.96f);
+            SaveData.Instance.scenceName = "A-開始畫面";
+            SaveCanvas(false);
+        }
+
         //將存的遊戲時長付於實質遊戲時長 (用於ForLoad)
         private void SetGameDuration(float duration)
         {
@@ -230,6 +253,11 @@ namespace FourCarvings
             return nowScenceName;
         }
 
+        private void GetPropsState()
+        {
+
+        }
+
         private void SetSceneceName(string scenceName)
         {
             SaveData.Instance.scenceName = scenceName;
@@ -243,14 +271,9 @@ namespace FourCarvings
             Debug.Log($"這是讀取的玩家位置{PlayerMovement.finalMovent}");
         }
 
-        //初始化遊戲資料 (用於:Start)
-        public void InitializeInfo()
-        {
-            receiveSaveData.gameTime = 0f;
-            receiveSaveData.playerPosition = new Vector2(-18.11f, 2.96f);
-            SaveData.Instance.scenceName = "A-開始畫面";
-            saveloadCanvas.gameObject.SetActive(false);
-        }
+        #endregion
+
+
 
         //檢查是否存檔欄已有檔案，如果已有按編號刪除 (用於:ForSave)
         private void CheckForSaveFile(string filepath,int id)
@@ -323,7 +346,7 @@ namespace FourCarvings
         public static Sprite LoadShot(int i)
         {
             var path = Path.Combine(shotPath, $"{i}.png");
-            Texture2D t = new Texture2D(640, 360);
+            Texture2D t = new Texture2D(411, 311);
             t.LoadImage(GetImgByte(path));
             return Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(0.5f, 0.5f));
         }
@@ -352,6 +375,7 @@ namespace FourCarvings
 
         #endregion
 
+     
         public  void QuitGame()
         {
             int autoID = 0;
