@@ -35,9 +35,10 @@ namespace FourCarvings
 
         private List<Slot> slotList = new List<Slot>();     //slot清單
         private int bagMaxSlots = 12;                       //背包最大格數
-        private bool bagIsOpen;
-        private bool isLastOne;
-        private int slotID;
+        
+        private bool bagIsOpen; //背包是否打開
+        private bool isLastOne; //物品是否為最後一個
+        private int slotID;     //物品欄位id
 
         private void Awake()
         {
@@ -45,7 +46,7 @@ namespace FourCarvings
 
             if (Instance == null)
             {
-                //DontDestroyOnLoad(gameObject);
+                
                 Instance = this;
             }
             else if (Instance != null)
@@ -60,32 +61,27 @@ namespace FourCarvings
         private void Start()
         {
             //初始化
-            Instance.InitializeDetailsUI();
-            Instance.bagCanvasGroup.alpha = 0;
+            Instance.InitializeDetailsUI();     
+            Instance.bagCanvasGroup.alpha = 0;  //背包介面不顯示
             bagIsOpen = false;
             HasItem();
 
             #region 監聽
-            Instance.openBag.onClick.AddListener(() => Instance.OpenBagPanel());
-            Instance.closeBag.onClick.AddListener(() => Instance.CloseBagPanel());
+            //Instance.openBag.onClick.AddListener(() => Instance.OpenBagPanel());
+            //Instance.closeBag.onClick.AddListener(() => Instance.CloseBagPanel());
             Instance.useButton.onClick.AddListener(() => Instance.UseItem());
             #endregion
         }
 
         private void Update()
         {
+            /*
             //O鍵控制背包
-            if(Input.GetKeyDown(KeyCode.O))
-            {
-                if (bagIsOpen==false)
-                {
-                    Instance.OpenBagPanel();
-                }
-                else if(bagIsOpen==true)
-                {
-                    Instance.CloseBagPanel();
-                }
-            }
+            if (!bagIsOpen)
+                OpenBagPanel();
+            else
+                CloseBagPanel
+            */
         }
 
         #region 獲得物品
@@ -309,7 +305,7 @@ namespace FourCarvings
         #endregion
 
         #region 按鈕控制面板
-
+        /*
         //開啟背包面板
         private void OpenBagPanel()
         {
@@ -326,7 +322,7 @@ namespace FourCarvings
             bagIsOpen = false;
             canvasManager.updateCanvas = true;
         }
-
+        */
 
         #endregion
 
