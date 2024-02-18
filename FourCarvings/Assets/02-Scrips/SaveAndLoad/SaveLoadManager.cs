@@ -285,12 +285,34 @@ namespace FourCarvings
             return nowScenceName;
         }
 
-        /*
-        private void GetPropsState()
+        //將儲存的道具狀態賦值於遊戲內
+        private void SetPropsState()
+        {
+            //第一關
+            //狐狸令牌_顯示
+            //通行證_顯示
+            //金幣01-04_顯示
+        }
+        //將儲存的對話觸發點狀態賦值於遊戲內
+        private void SetDialogueState()
+        {
+            //第一關
+            //對話01_顯示
+            //對話02_顯示 如果對話點02回檔，選項兩個也要跟著回檔
+        }
+        //將儲存的對話效果賦值於遊戲內
+        private void SetDialogueEffect()
+        {
+            //第一關-選項01
+            //小精靈_顯示
+            //移速加成
+        }
+        //將儲存的第一關封印門狀態賦值於遊戲內
+        private void SetSealedDoor()
         {
 
         }
-        */
+
 
         //  將儲存的場景賦值於遊戲內場景
         private void SetSceneceName(string scenceName)

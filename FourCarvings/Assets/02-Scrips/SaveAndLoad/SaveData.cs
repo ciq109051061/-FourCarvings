@@ -20,16 +20,21 @@ namespace FourCarvings
         public Vector2 playerPosition; //玩家位置
         public string scenceName;      //場景名
 
-        //道具狀態-撿了就沒有
-        public GameObject rePassCard;
-        public GameObject reGold01;
-        public GameObject reFox;
-        //道具效果紀錄
-        //對話選項效果紀錄
-        //對話序號紀錄
-        //觸發點狀態紀錄
-        
-        
+        //第一關遊戲資料
+        // 道具
+        //狐狸令牌_顯示
+        //通行證_顯示
+        //金幣01-04_顯示
+        // 對話觸發點
+        //對話01_顯示
+        //對話02_顯示 如果對話點02回檔，選項兩個也要跟著回檔
+        // 選項
+        //小精靈_顯示
+        //移速加成
+        // 封印門
+        //封印門的碰撞
+        //封印門的偵測
+
 
     }
 }

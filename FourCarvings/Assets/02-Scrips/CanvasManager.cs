@@ -38,12 +38,14 @@ namespace FourCarvings
             //開啟存讀面板，面板層級為3，關閉則為1。
             if (saveLoad_active)
             {
+                canvas[0].GetComponent<Canvas>().gameObject.SetActive(true);
                 canvas[0].GetComponent<Canvas>().sortingOrder = 3;
                 Debug.Log($"存讀面板開啟，層級為{canvas[0].GetComponent<Canvas>().sortingOrder}");
                 MainPanel(false);
             }
             else
             {
+                canvas[0].GetComponent<Canvas>().gameObject.SetActive(false);
                 canvas[0].GetComponent<Canvas>().sortingOrder = 1;
                 Debug.Log($"存讀面板關閉，層級為{canvas[0].GetComponent<Canvas>().sortingOrder}");
             }
@@ -61,12 +63,14 @@ namespace FourCarvings
             }
             if (dialogue_active)
             {
+                //canvas[2].GetComponent<Canvas>().gameObject.SetActive(true);
                 canvas[2].GetComponent<Canvas>().sortingOrder = 3;
                 Debug.Log($"對話面板開啟，層級為{canvas[2].GetComponent<Canvas>().sortingOrder}");
                 MainPanel(false);
             }
             else
             {
+                //canvas[2].GetComponent<Canvas>().gameObject.SetActive(false);
                 canvas[2].GetComponent<Canvas>().sortingOrder = 1;
                 Debug.Log($"對話面板關閉，層級為{canvas[2].GetComponent<Canvas>().sortingOrder}");
             }
